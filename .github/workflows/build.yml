@@ -1,0 +1,34 @@
+name: Build PS5 ELF
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compiler
+        run: sudo apt-get update && sudo apt-get install -y clang-18 lld-18 make python3 unzip
+      - name: Download SDK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo ps5-payload-dev/sdk --pattern ps5-payload-sdk.zip --dir /tmp/ps5-sdk
+          sha256sum /tmp/ps5-sdk/ps5-payload-sdk.zip
+          unzip -q /tmp/ps5-sdk/ps5-payload-sdk.zip -d "$RUNNER_TEMP"
+      - name: Compile and inspect
+        run: |
+          export PS5_PAYLOAD_SDK="$RUNNER_TEMP/ps5-payload-sdk"
+          make
+          file baidu-launcher.elf
+          readelf -h baidu-launcher.elf
+          sha256sum baidu-launcher.elf > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baidu-launcher
+          path: |
+            baidu-launcher.elf
+            SHA256SUMS
+          if-no-files-found: error

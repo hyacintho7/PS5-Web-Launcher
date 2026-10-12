@@ -1,0 +1,11 @@
+{
+  "applicationCategoryType": 65536,
+  "titleId": "BDUL00001",
+  "deeplinkUri": "https://www.baidu.com/",
+  "localizedParameters": {
+    "defaultLanguage": "en-US",
+    "en-US": { "titleName": "Baidu" },
+    "zh-Hans": { "titleName": "百度" },
+    "zh-Hant": { "titleName": "百度" }
+  }
+}
